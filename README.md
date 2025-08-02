@@ -1,5 +1,5 @@
 # API specification
-### Fast API
+### API Tool: Fast API
 ### Endpoint
   - POST: /eval
     - Header Content-Type: application/json
