@@ -1,0 +1,22 @@
+{
+  "name": "Demo Web App",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A demo web application using Expressjs",
+  "main": "index.js",
+  "scripts": {
+    "devStart": "nodemon app.js",
+    "getv": "node -v"
+  },
+  "keywords": [],
+  "author": "Naxocist",
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10"
+  }
+}

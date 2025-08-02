@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Prompt Chat</title>
+  <style>
+    body {
+      background: #fff;
+      color: #222;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .title {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #fc6203;
+      background: #fff;
+      border-bottom: 1px solid #fc6203;
+      margin: 0;
+      padding: 24px 0 12px 0;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px rgba(252, 98, 3, 0.07);
+    }
+
+    .history-block {
+      flex: 1;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 90px 0 120px 0;
+      color: #222;
+      font-size: 1.08rem;
+      word-break: break-word;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border-radius: 0;
+      border-top: none;
+      margin-bottom: 0;
+      min-height: 300px;
+      box-sizing: border-box;
+    }
+
+    .pair {
+      margin: 0 0 24px 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: transparent;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s;
+    }
+
+    .pair:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .message {
+      margin: 0;
+      padding: 0;
+      line-height: 1.7;
+      word-break: break-word;
+      font-size: 1.08rem;
+      max-width: 90%;
+      white-space: pre-line;
+    }
+
+    .user {
+      color: #fff;
+      font-weight: 600;
+      background: #fc6203;
+      padding: 14px 20px;
+      border-radius: 18px 18px 0 18px;
+      align-self: flex-end;
+      box-shadow: 0 1px 4px rgba(252, 98, 3, 0.08);
+      border: none;
+      font-size: 1.08rem;
+    }
+
+    .ai {
+      color: #222;
+      font-weight: 400;
+      background: #f5f5f5;
+      padding: 14px 20px;
+      border-radius: 18px 18px 18px 0;
+      align-self: flex-start;
+      box-shadow: 0 1px 4px rgba(252, 98, 3, 0.08);
+      border: 1px solid #fc6203;
+      font-size: 1.08rem;
+    }
+
+    .prompt-form {
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      gap: 8px;
+      background: #fff;
+      padding: 18px 0 24px 0;
+      border-top: 1px solid #fc6203;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: 0 auto;
+      z-index: 2;
+      box-sizing: border-box;
+      justify-content: center;
+    }
+
+    .prompt-input {
+      flex: 1;
+      min-height: 48px;
+      padding: 14px 16px;
+      border: 2px solid #fc6203;
+      border-radius: 8px;
+      font-size: 1.08rem;
+      background: #fff;
+      color: #fc6203;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      max-width: 400px;
+      resize: vertical;
+      font-family: inherit;
+    }
+
+    .prompt-input:focus {
+      border-color: #858585;
+      background: #fff;
+    }
+
+    .prompt-input:disabled {
+      background: #f5f5f5;
+      color: #aaa;
+      border-color: #eee;
+      cursor: not-allowed;
+    }
+
+    .prompt-submit {
+      background: #fc6203;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px 24px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .prompt-submit:disabled {
+      background: #eee;
+      color: #aaa;
+      cursor: not-allowed;
+      border: 1px solid #eee;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .prompt-submit:hover:not(:disabled) {
+      background: #858585;
+      color: #fff;
+    }
+
+    @media (max-width: 700px) {
+
+      .history-block,
+      .prompt-form {
+        max-width: 100vw;
+        padding-left: 0;
+        padding-right: 0;
+      }
+
+      .prompt-input {
+        max-width: 100vw;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .title {
+        font-size: 1.4rem;
+        margin: 18px 0 8px 0;
+      }
+
+      .history-block {
+        min-height: 200px;
+        padding-bottom: 110px;
+      }
+
+      .prompt-form {
+        padding: 12px 0 16px 0;
+      }
+
+      .prompt-input,
+      .prompt-submit {
+        font-size: 1rem;
+        padding: 10px 12px;
+      }
+
+      .prompt-submit:disabled {
+        background: #eee;
+        color: #aaa;
+        cursor: not-allowed;
+        border: 1px solid #fc6203;
+        opacity: 0.7;
+        pointer-events: none;
+        box-shadow: 0 0 0 2px #fc6203 inset;
+        text-decoration: line-through;
+        font-style: italic;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="title">🤓🩺ธรรมะบ๋าวมาร์ชพีกอล์ฟ</div>
+  <div class="history-block" id="historyBlock">
+    <!-- Messages will be rendered here -->
+  </div>
+  <form class="prompt-form" id="promptForm" autocomplete="off">
+    <textarea class="prompt-input" id="promptInput" name="prompt" placeholder="Type your question..." required
+      rows="2"></textarea>
+    <button type="submit" class="prompt-submit" id="promptSubmit">Send</button>
+  </form>
+  <script>
+    const promptForm = document.getElementById('promptForm');
+    const promptInput = document.getElementById('promptInput');
+    const historyBlock = document.getElementById('historyBlock');
+    const promptSubmit = document.getElementById('promptSubmit');
+    // Store messages as pairs: [{user, ai}]
+    const pairs = [];
+
+    function renderHistory() {
+      historyBlock.innerHTML = "";
+      pairs.forEach(pair => {
+        const pairDiv = document.createElement("div");
+        pairDiv.className = "pair";
+        const userDiv = document.createElement("div");
+        userDiv.className = "message user";
+        userDiv.innerHTML = `🧑 ${pair.user}`;
+        pairDiv.appendChild(userDiv);
+
+        if (pair.ai) {
+          const aiDiv = document.createElement("div");
+          aiDiv.className = "message ai";
+          aiDiv.innerHTML = `🤖 ${pair.ai}`;
+          pairDiv.appendChild(aiDiv);
+        }
+        historyBlock.appendChild(pairDiv);
+      });
+      historyBlock.scrollTop = historyBlock.scrollHeight;
+    }
+
+    promptForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const userPrompt = promptInput.value.trim();
+      if (!userPrompt) return;
+      const myInputField = document.getElementById("promptInput");
+      myInputField.disabled = true;
+      promptSubmit.disabled = true;
+
+
+      const api_url = "http://172.16.30.145:5000/eval" // AI endpoint
+      fetch(api_url, {
+        method: "POST",
+        body: JSON.stringify({ question: userPrompt }),
+        headers: { "Content-type": "application/json; charset=UTF-8" }
+      })
+        .then(response => response.json())
+        .then((json) => {
+          const answer = json.answer || "No response from AI";
+          const reason = json.reason || "No reason provided";
+          const aiResponse = `answer: ${answer}\nreason: ${reason}`;
+          pairs.push({ user: userPrompt, ai: aiResponse });
+          renderHistory();
+          promptInput.value = '';
+          window.scrollTo(0, document.body.scrollHeight);
+          myInputField.disabled = false;
+          promptSubmit.disabled = false;
+        }).catch((error) => {
+          console.error("Error:", error);
+          // pairs.push({ user: userPrompt, ai: "Error processing request" });
+          renderHistory();
+          promptInput.value = '';
+          myInputField.disabled = false;
+          promptSubmit.disabled = false;
+        });
+    });
+
+    // Ensure last input is always visible
+    window.addEventListener('resize', renderHistory);
+  </script>
+</body>
+
+</html>
